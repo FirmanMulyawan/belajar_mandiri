@@ -95,5 +95,5 @@ def update_jenis_mainan(id_):
     finally:
         db.session.close()
         
-if __name__=='__main__':
-    app.run()
+# if __name__=='__main__':
+#     app.run()

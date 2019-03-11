@@ -57,6 +57,8 @@ def add_customer():
         return "Customer added.customer id={}".format(customer.customer_id)
     except Exception as e:
         return(str(e))
+    finally:
+        db.session.close()
 
 @app.route("/deleteCustomer/<id_>", methods=['DELETE'])
 def remove_customer(id_):
@@ -71,5 +73,46 @@ def remove_customer(id_):
     finally:
         db.session.close()
 
-if __name__=='__main__':
-    app.run()
+@app.route('/updateCustomer/<id_>', methods=["PUT"])
+def update_Customer(id_):
+    updateCustomer = get_customer_by_id(id_).json
+
+    if request.args.get('customer_id') == None:
+        customer_id = updateCustomer['customer_id']
+    else:
+        customer_id = request.args.get('customer_id')
+    
+    if request.args.get('username') == None:
+        username = updateCustomer['username']
+    else:
+        username = request.args.get('username')
+
+    if request.args.get('password') == None:
+        password = updateCustomer['password']
+    else:
+        password = request.args.get('password')
+
+    if request.args.get('email') == None:
+        email = updateCustomer['email']
+    else:
+        email = request.args.get('email')
+    # if request.args.get('kapasitas_memory') == None:
+    #     kapasitas_memory = model_existing['kapasitas_memory']
+    # else:
+    #     kapasitas_memory = request.args.get('kapasitas_memory')
+
+    try:
+        CustomerUpdate = {
+            'customer_id' : customer_id,
+            'username' : username,
+            'password' : password,
+            'email' : email            
+        }
+        customer = Customer.query.filter_by(customer_id=id_).update(CustomerUpdate)
+        db.session.commit()
+        return 'update customer'
+    except Exception as e:
+        return(str(e))
+
+# if __name__=='__main__':
+#     app.run()
